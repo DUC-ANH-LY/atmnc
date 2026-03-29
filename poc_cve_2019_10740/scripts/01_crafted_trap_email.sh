@@ -2,21 +2,21 @@
 set -euo pipefail
 
 # Build demo_out/cve_2019_10740_trap.eml: multipart message embedding the PKCS#7
-# from the main repo's demo_out/encrypted.pem (CVE-2019-10740-style wrap; see README).
+# from smime-demo/demo_out/encrypted.pem (CVE-2019-10740-style wrap; see README).
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 REPO="$(cd "$ROOT/.." && pwd)"
 OUT="$ROOT/demo_out"
-PEM="$REPO/demo_out/encrypted.pem"
+PEM="$REPO/smime-demo/demo_out/encrypted.pem"
 EML="$OUT/cve_2019_10740_trap.eml"
 
 mkdir -p "$OUT"
 
 if [[ ! -f "$PEM" ]]; then
   echo "error: $PEM not found" >&2
-  echo "  Run the main S/MIME demo through encryption first, e.g. from the repo root:" >&2
-  echo "    ./scripts/run_all.sh" >&2
-  echo "  or: ./scripts/03_encrypt_decrypt.sh" >&2
+  echo "  Run the normal S/MIME demo through encryption first, e.g. from the repo root:" >&2
+  echo "    ./smime-demo/scripts/run_all.sh" >&2
+  echo "  or: ./smime-demo/scripts/03_encrypt_decrypt.sh" >&2
   exit 1
 fi
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail          # Exit on error/undefined variable/pipeline error for safety
 
-# Set ROOT to the parent directory of this script (i.e., repo root)
+# Set ROOT to the parent directory of this script (i.e., smime-demo root)
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 # Set OUT to the demo output directory

@@ -1,5 +1,0 @@
-Hello from the S/MIME demo.
-
-This plaintext is signed by Alice and encrypted for Bob using OpenSSL smime.
-
-Xin chao ducanh1722003

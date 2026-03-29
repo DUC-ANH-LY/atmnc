@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Simulate post-verify identity binding: vulnerable vs strict (CVE-2026-2748 style)."""
+"""Post-verify identity binding: vulnerable vs strict (CVE-2026-2748 style)."""
 
 from __future__ import annotations
 
@@ -64,19 +64,26 @@ def main() -> int:
         print("error: could not parse rfc822Name from Subject Alternative Name", file=sys.stderr)
         return 1
 
-    print("\n--- Identity binding (application / gateway layer) ---")
+    print("\n--- Identity binding (gateway / application layer) ---")
     print(f"From address (message):     {from_addr!r}")
     print(f"Signer cert email (SAN):    {san_email!r}")
 
     vuln_match = _strip_all_ascii_ws(san_email) == _strip_all_ascii_ws(from_addr)
     print("\nVulnerable binding (strip ALL ASCII whitespace, then compare):")
-    print("  " + ("MATCH — treat as same identity (wrong for this PoC)" if vuln_match else "NO MATCH"))
+    print(
+        "  "
+        + (
+            "MATCH — spoof accepted as same identity (modeled vulnerable gateway)"
+            if vuln_match
+            else "NO MATCH"
+        )
+    )
 
     strict_ok = not any(c in string.whitespace for c in san_email)
     strict_equal = strict_ok and san_email == from_addr
-    print("\nStrict binding (reject SAN if it contains any whitespace; else require exact match):")
+    print("\nStrict binding (reject SAN if any whitespace; else require exact match):")
     if not strict_ok:
-        print("  REJECT — malformed / whitespace in certificate email (patched SEPPmail-style behavior)")
+        print("  REJECT — malformed / whitespace in certificate email (patched-style)")
     elif strict_equal:
         print("  OK — SAN email exactly equals From address")
     else:
@@ -86,7 +93,6 @@ def main() -> int:
 
 
 def _strip_all_ascii_ws(s: str) -> str:
-    print("This is the string: ", s)
     return "".join(c for c in s if c not in string.whitespace)
 
 

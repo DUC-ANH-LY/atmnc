@@ -8,15 +8,17 @@ MSG="$OUT/unsigned_message.eml"
 mkdir -p "$OUT"
 
 cat > "$MSG" <<'EOF'
-From: ceo@company.com
+From: alice@example.com
 To: analyst@lab.local
-Subject: CVE-2026-2748 educational PoC
+Subject: CVE-2026-2748 educational PoC — signed as "Alice"
+
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 
-This body is signed with a certificate whose rfc822Name SAN is not literally
-ceo@company.com (it contains a space). Cryptographic verification still passes;
-identity binding is where a vulnerable gateway can go wrong.
+This message is signed with a certificate whose rfc822Name SAN is not
+literally alice@example.com — it contains a space (alice @example.com).
+OpenSSL smime -verify still passes; a naive identity binding can wrongly
+treat this as Alice.
 EOF
 
 openssl smime -sign -in "$MSG" \

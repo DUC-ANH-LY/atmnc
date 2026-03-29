@@ -3,7 +3,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
-echo "CVE-2019-10740 educational demo — Roundcube reply-leak class (MIME wrap)"
+echo "CVE-2019-10740 educational demo — MIME multipart wrap (local .eml artifact)"
 echo "See: $ROOT/README.md"
 echo ""
 

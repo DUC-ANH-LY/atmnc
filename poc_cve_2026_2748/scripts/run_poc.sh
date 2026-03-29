@@ -3,7 +3,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
-echo "CVE-2026-2748 educational PoC — whitespace in S/MIME certificate email SAN"
+echo "CVE-2026-2748 educational PoC — S/MIME cert email whitespace vs identity binding"
 echo "See: $ROOT/README.md"
 echo ""
 
