@@ -73,25 +73,50 @@ flowchart TB
   bobMat --> decOp
 ```
 
-### Alice, Bob, and CA (sequence diagram)
+### Alice, Bob, and CA (full sequence diagram)
 
 ```mermaid
 sequenceDiagram
+  participant run as run_all.sh
   participant ca as Demo_CA
   participant alice as Alice
   participant bob as Bob
   participant plain as hello.txt
   participant out as demo_out
-  Note over ca,bob: 01_gen_certs
+  participant openssl as OpenSSL
+
+  run->>out: create/refresh demo_out
+
+  Note over run,bob: Step 1 - 01_gen_certs
+  run->>openssl: generate CA keypair and cert
+  openssl-->>ca: ca.key + ca.crt
+  run->>openssl: generate Alice key + CSR
+  run->>openssl: sign Alice CSR with CA
   ca->>alice: alice.key alice.crt
+  run->>openssl: generate Bob key + CSR
+  run->>openssl: sign Bob CSR with CA
   ca->>bob: bob.key bob.crt
   ca->>out: ca.crt
-  Note over alice,out: 02_sign_verify
+
+  Note over run,ca: Step 2 - 02_sign_verify
+  run->>alice: invoke signing with alice.key/alice.crt
   alice->>plain: read
-  alice->>out: sign with Alice private key to signed.pem
-  out->>ca: verify signer chains to CA
-  Note over alice,bob: 03_encrypt_decrypt
+  alice->>openssl: smime -sign
+  openssl-->>out: signed.pem
+  run->>openssl: smime -verify with -CAfile ca.crt
+  openssl->>out: read signed.pem
+  openssl->>ca: validate signer chain to trusted CA
+  openssl-->>out: verified_message.txt
+
+  Note over run,bob: Step 3 - 03_encrypt_decrypt
+  run->>alice: invoke encryption for Bob
   alice->>plain: read
-  alice->>out: encrypt for Bob using bob.crt to encrypted.pem
-  bob->>out: decrypt with bob.key to decrypted.txt
+  alice->>openssl: smime -encrypt with bob.crt
+  openssl-->>out: encrypted.pem
+  run->>bob: invoke decryption with bob.key
+  bob->>openssl: smime -decrypt
+  openssl->>out: read encrypted.pem
+  openssl-->>out: decrypted.txt
+
+  Note over out: decrypted.txt should match hello.txt
 ```
